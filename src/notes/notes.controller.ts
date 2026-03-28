@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, ParseIntPipe } from '@nestjs/common';
 import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
@@ -10,13 +10,24 @@ export class NotesController {
 
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createNoteDto: CreateNoteDto) {
-    return this.notesService.create(createNoteDto);
+  create(
+    @Body() createNoteDto: CreateNoteDto,
+    @Request() req: any
+  ) {
+    return this.notesService.create(createNoteDto, req.user.id);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.notesService.findAll();
+  findAll(
+    @Request() req: any,
+    @Query('take', ParseIntPipe) take?: number,
+    @Query('skip', ParseIntPipe) skip?: number
+  ) {
+    return this.notesService.findAll(
+      {take: take || 10, skip: skip || 0}, 
+      req.user.id
+    );
   }
 
   @Get(':id')
