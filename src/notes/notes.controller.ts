@@ -21,27 +21,37 @@ export class NotesController {
   @Get()
   findAll(
     @Request() req: any,
-    @Query('take', ParseIntPipe) take?: number,
-    @Query('skip', ParseIntPipe) skip?: number
+    @Query('take', new ParseIntPipe({ optional: true })) take?: number,
+    @Query('skip', new ParseIntPipe({ optional: true })) skip?: number
   ) {
     return this.notesService.findAll(
-      {take: take || 10, skip: skip || 0}, 
+      { take: take || 10, skip: skip || 0 },
       req.user.id
     );
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notesService.findOne(+id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: any,
+  ) {
+    return this.notesService.findOne(id, req.user.id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNoteDto: UpdateNoteDto) {
-    return this.notesService.update(+id, updateNoteDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateNoteDto: UpdateNoteDto,
+    @Request() req: any,
+  ) {
+    return this.notesService.update(id, updateNoteDto, req.user.id);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.notesService.remove(+id);
+  remove(@Param('id') id: string, @Request() req: any) {
+    return  this.notesService.remove(+id, req.user.id);
   }
 }
