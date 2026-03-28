@@ -2,11 +2,11 @@ import { IsEmail, IsString, IsStrongPassword } from "class-validator";
 
 export class RegisterDto {
     @IsString()
-    name: string;
+    name!: string;
 
     @IsEmail()
-    email: string;
+    email!: string;
 
     @IsStrongPassword()
-    password: string
+    password!: string;
 }
