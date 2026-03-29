@@ -3,7 +3,9 @@ import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('notes')
 export class NotesController {
   constructor(private readonly notesService: NotesService) { }
@@ -52,6 +54,6 @@ export class NotesController {
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string, @Request() req: any) {
-    return  this.notesService.remove(+id, req.user.id);
+    return this.notesService.remove(+id, req.user.id);
   }
 }
